@@ -1,3 +1,4 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/BruceCC/Roo-Code)
 <div align="center">
 <sub>
 
