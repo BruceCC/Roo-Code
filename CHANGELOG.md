@@ -1,6 +1,36 @@
 # Roo Code Changelog
 
-## [3.19.0] - 2025-05-30
+## [3.19.3] - 2025-06-02
+
+- Fix SSE MCP Invocation - Fixed SSE connection issue in McpHub.ts by ensuring transport.start override only applies to stdio transports, allowing SSE and streamable-http transports to retain their original start methods (thanks @taylorwilsdon!)
+
+## [3.19.2] - 2025-06-01
+
+- Add support for Streamable HTTP Transport MCP servers (thanks @taylorwilsdon!)
+- Add cached read and writes to stats and cost calculation for LiteLLM provider (thanks @mollux!)
+- Prevent dump of an entire file into the context on user edit (thanks @KJ7LNW!)
+- Fix directory link handling in markdown (thanks @KJ7LNW!)
+- Prevent start_line/end_line in apply_diff REPLACE (thanks @KJ7LNW!)
+- Unify history item UI with TaskItem and TaskItemHeader (thanks @KJ7LNW!)
+- Fix the label of the OpenAI-compatible API keys
+- Fix Virtuoso footer re-rendering issue (thanks @kiwina!)
+- Optimize ChatRowContent layout and styles (thanks @zhangtony239!)
+- Release memory in apply diff (thanks @xyOz-dev!)
+- Upgrade Node.js to v20.19.2 for security enhancements (thanks @PeterDaveHello!)
+- Fix typos (thanks @noritaka1166!)
+
+## [3.19.1] - 2025-05-30
+
+- Experimental feature to allow reading multiple files at once (thanks @samhvw8!)
+- Fix to correctly pass headers to SSE MCP servers
+- Adding support for custom VPC endpoints when using Amazon Bedrock (thanks @kcwhite!)
+- Fix bug with context condensing in Amazon Bedrock
+- Fix UTF-8 encoding in ExecaTerminalProcess (thanks @mr-ryan-james!)
+- Set sidebar name bugfix (thanks @chrarnoldus!)
+- Fix link to CONTRIBUTING.md in feature request template (thanks @cannuri!)
+- Add task metadata to Unbound and improve caching logic (thanks @pugazhendhi-m!)
+
+## [3.19.0] - 2025-05-29
 
 - Enable intelligent content condensing by default and move condense button out of expanded task menu
 - Skip condense and show error if context grows during condensing
