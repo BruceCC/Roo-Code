@@ -17,7 +17,8 @@ import { checkoutDiffPayloadSchema, checkoutRestorePayloadSchema, WebviewMessage
 import { checkExistKey } from "../../shared/checkExistApiConfig"
 import { experimentDefault } from "../../shared/experiments"
 import { Terminal } from "../../integrations/terminal/Terminal"
-import { openFile, openImage } from "../../integrations/misc/open-file"
+import { openFile } from "../../integrations/misc/open-file"
+import { openImage, saveImage } from "../../integrations/misc/image-handler"
 import { selectImages } from "../../integrations/misc/process-images"
 import { getTheme } from "../../integrations/theme/getTheme"
 import { discoverChromeHostUrl, tryChromeHostUrl } from "../../services/browser/browserDiscovery"
@@ -152,6 +153,10 @@ export const webviewMessageHandler = async (
 			break
 		case "alwaysAllowWriteOutsideWorkspace":
 			await updateGlobalState("alwaysAllowWriteOutsideWorkspace", message.bool ?? undefined)
+			await provider.postStateToWebview()
+			break
+		case "alwaysAllowWriteProtected":
+			await updateGlobalState("alwaysAllowWriteProtected", message.bool ?? undefined)
 			await provider.postStateToWebview()
 			break
 		case "alwaysAllowExecute":
@@ -423,7 +428,10 @@ export const webviewMessageHandler = async (
 			provider.postMessageToWebview({ type: "vsCodeLmModels", vsCodeLmModels })
 			break
 		case "openImage":
-			openImage(message.text!)
+			openImage(message.text!, { values: message.values })
+			break
+		case "saveImage":
+			saveImage(message.dataUri!)
 			break
 		case "openFile":
 			openFile(message.text!, message.values as { create?: boolean; content?: string; line?: number })
@@ -821,37 +829,18 @@ export const webviewMessageHandler = async (
 			break
 		case "updateSupportPrompt":
 			try {
-				if (Object.keys(message?.values ?? {}).length === 0) {
+				if (!message?.values) {
 					return
 				}
 
-				const existingPrompts = getGlobalState("customSupportPrompts") ?? {}
-				const updatedPrompts = { ...existingPrompts, ...message.values }
-				await updateGlobalState("customSupportPrompts", updatedPrompts)
+				// Replace all prompts with the new values from the cached state
+				await updateGlobalState("customSupportPrompts", message.values)
 				await provider.postStateToWebview()
 			} catch (error) {
 				provider.log(
 					`Error update support prompt: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
 				)
 				vscode.window.showErrorMessage(t("common:errors.update_support_prompt"))
-			}
-			break
-		case "resetSupportPrompt":
-			try {
-				if (!message?.text) {
-					return
-				}
-
-				const existingPrompts = getGlobalState("customSupportPrompts") ?? {}
-				const updatedPrompts = { ...existingPrompts }
-				updatedPrompts[message.text] = undefined
-				await updateGlobalState("customSupportPrompts", updatedPrompts)
-				await provider.postStateToWebview()
-			} catch (error) {
-				provider.log(
-					`Error reset support prompt: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
-				)
-				vscode.window.showErrorMessage(t("common:errors.reset_support_prompt"))
 			}
 			break
 		case "updatePrompt":
