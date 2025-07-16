@@ -553,6 +553,7 @@ export class ClineProvider
 			enableDiff,
 			enableCheckpoints,
 			fuzzyMatchThreshold,
+			consecutiveMistakeLimit: apiConfiguration.consecutiveMistakeLimit,
 			task,
 			images,
 			experiments,
@@ -589,6 +590,7 @@ export class ClineProvider
 			enableDiff,
 			enableCheckpoints,
 			fuzzyMatchThreshold,
+			consecutiveMistakeLimit: apiConfiguration.consecutiveMistakeLimit,
 			historyItem,
 			experiments,
 			rootTask: historyItem.rootTask,
@@ -1542,6 +1544,10 @@ export class ClineProvider
 				codebaseIndexEmbedderProvider: codebaseIndexConfig?.codebaseIndexEmbedderProvider ?? "openai",
 				codebaseIndexEmbedderBaseUrl: codebaseIndexConfig?.codebaseIndexEmbedderBaseUrl ?? "",
 				codebaseIndexEmbedderModelId: codebaseIndexConfig?.codebaseIndexEmbedderModelId ?? "",
+				codebaseIndexEmbedderModelDimension: codebaseIndexConfig?.codebaseIndexEmbedderModelDimension ?? 1536,
+				codebaseIndexOpenAiCompatibleBaseUrl: codebaseIndexConfig?.codebaseIndexOpenAiCompatibleBaseUrl,
+				codebaseIndexSearchMaxResults: codebaseIndexConfig?.codebaseIndexSearchMaxResults,
+				codebaseIndexSearchMinScore: codebaseIndexConfig?.codebaseIndexSearchMinScore,
 			},
 			mdmCompliant: this.checkMdmCompliance(),
 			profileThresholds: profileThresholds ?? {},
@@ -1703,6 +1709,12 @@ export class ClineProvider
 					stateValues.codebaseIndexConfig?.codebaseIndexEmbedderProvider ?? "openai",
 				codebaseIndexEmbedderBaseUrl: stateValues.codebaseIndexConfig?.codebaseIndexEmbedderBaseUrl ?? "",
 				codebaseIndexEmbedderModelId: stateValues.codebaseIndexConfig?.codebaseIndexEmbedderModelId ?? "",
+				codebaseIndexEmbedderModelDimension:
+					stateValues.codebaseIndexConfig?.codebaseIndexEmbedderModelDimension,
+				codebaseIndexOpenAiCompatibleBaseUrl:
+					stateValues.codebaseIndexConfig?.codebaseIndexOpenAiCompatibleBaseUrl,
+				codebaseIndexSearchMaxResults: stateValues.codebaseIndexConfig?.codebaseIndexSearchMaxResults,
+				codebaseIndexSearchMinScore: stateValues.codebaseIndexConfig?.codebaseIndexSearchMinScore,
 			},
 			profileThresholds: stateValues.profileThresholds ?? {},
 		}
@@ -1843,6 +1855,19 @@ export class ClineProvider
 		// Get git repository information
 		const gitInfo = await getWorkspaceGitInfo()
 
+		// Calculate todo list statistics
+		const todoList = task?.todoList
+		let todos: { total: number; completed: number; inProgress: number; pending: number } | undefined
+
+		if (todoList && todoList.length > 0) {
+			todos = {
+				total: todoList.length,
+				completed: todoList.filter((todo) => todo.status === "completed").length,
+				inProgress: todoList.filter((todo) => todo.status === "in_progress").length,
+				pending: todoList.filter((todo) => todo.status === "pending").length,
+			}
+		}
+
 		// Return all properties including git info - clients will filter as needed
 		return {
 			appName: packageJSON?.name ?? Package.name,
@@ -1857,6 +1882,7 @@ export class ClineProvider
 			diffStrategy: task?.diffStrategy?.getName(),
 			isSubtask: task ? !!task.parentTask : undefined,
 			cloudIsAuthenticated,
+			...(todos && { todos }),
 			...gitInfo,
 		}
 	}
