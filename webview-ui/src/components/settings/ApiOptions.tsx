@@ -15,6 +15,7 @@ import {
 	litellmDefaultModelId,
 	openAiNativeDefaultModelId,
 	anthropicDefaultModelId,
+	doubaoDefaultModelId,
 	claudeCodeDefaultModelId,
 	geminiDefaultModelId,
 	deepSeekDefaultModelId,
@@ -22,9 +23,11 @@ import {
 	mistralDefaultModelId,
 	xaiDefaultModelId,
 	groqDefaultModelId,
+	cerebrasDefaultModelId,
 	chutesDefaultModelId,
 	bedrockDefaultModelId,
 	vertexDefaultModelId,
+	sambaNovaDefaultModelId,
 } from "@roo-code/types"
 
 import { vscode } from "@src/utils/vscode"
@@ -53,12 +56,15 @@ import {
 import {
 	Anthropic,
 	Bedrock,
+	Cerebras,
 	Chutes,
 	ClaudeCode,
 	DeepSeek,
+	Doubao,
 	Gemini,
 	Glama,
 	Groq,
+	HuggingFace,
 	LMStudio,
 	LiteLLM,
 	Mistral,
@@ -68,6 +74,7 @@ import {
 	OpenAICompatible,
 	OpenRouter,
 	Requesty,
+	SambaNova,
 	Unbound,
 	Vertex,
 	VSCodeLM,
@@ -285,10 +292,12 @@ const ApiOptions = ({
 				requesty: { field: "requestyModelId", default: requestyDefaultModelId },
 				litellm: { field: "litellmModelId", default: litellmDefaultModelId },
 				anthropic: { field: "apiModelId", default: anthropicDefaultModelId },
+				cerebras: { field: "apiModelId", default: cerebrasDefaultModelId },
 				"claude-code": { field: "apiModelId", default: claudeCodeDefaultModelId },
 				"openai-native": { field: "apiModelId", default: openAiNativeDefaultModelId },
 				gemini: { field: "apiModelId", default: geminiDefaultModelId },
 				deepseek: { field: "apiModelId", default: deepSeekDefaultModelId },
+				doubao: { field: "apiModelId", default: doubaoDefaultModelId },
 				moonshot: { field: "apiModelId", default: moonshotDefaultModelId },
 				mistral: { field: "apiModelId", default: mistralDefaultModelId },
 				xai: { field: "apiModelId", default: xaiDefaultModelId },
@@ -296,6 +305,7 @@ const ApiOptions = ({
 				chutes: { field: "apiModelId", default: chutesDefaultModelId },
 				bedrock: { field: "apiModelId", default: bedrockDefaultModelId },
 				vertex: { field: "apiModelId", default: vertexDefaultModelId },
+				sambanova: { field: "apiModelId", default: sambaNovaDefaultModelId },
 				openai: { field: "openAiModelId" },
 				ollama: { field: "ollamaModelId" },
 				lmstudio: { field: "lmStudioModelId" },
@@ -447,7 +457,11 @@ const ApiOptions = ({
 			)}
 
 			{selectedProvider === "gemini" && (
-				<Gemini apiConfiguration={apiConfiguration} setApiConfigurationField={setApiConfigurationField} />
+				<Gemini
+					apiConfiguration={apiConfiguration}
+					setApiConfigurationField={setApiConfigurationField}
+					fromWelcomeView={fromWelcomeView}
+				/>
 			)}
 
 			{selectedProvider === "openai" && (
@@ -465,6 +479,10 @@ const ApiOptions = ({
 
 			{selectedProvider === "deepseek" && (
 				<DeepSeek apiConfiguration={apiConfiguration} setApiConfigurationField={setApiConfigurationField} />
+			)}
+
+			{selectedProvider === "doubao" && (
+				<Doubao apiConfiguration={apiConfiguration} setApiConfigurationField={setApiConfigurationField} />
 			)}
 
 			{selectedProvider === "moonshot" && (
@@ -487,6 +505,14 @@ const ApiOptions = ({
 				<Groq apiConfiguration={apiConfiguration} setApiConfigurationField={setApiConfigurationField} />
 			)}
 
+			{selectedProvider === "huggingface" && (
+				<HuggingFace apiConfiguration={apiConfiguration} setApiConfigurationField={setApiConfigurationField} />
+			)}
+
+			{selectedProvider === "cerebras" && (
+				<Cerebras apiConfiguration={apiConfiguration} setApiConfigurationField={setApiConfigurationField} />
+			)}
+
 			{selectedProvider === "chutes" && (
 				<Chutes apiConfiguration={apiConfiguration} setApiConfigurationField={setApiConfigurationField} />
 			)}
@@ -498,6 +524,10 @@ const ApiOptions = ({
 					organizationAllowList={organizationAllowList}
 					modelValidationError={modelValidationError}
 				/>
+			)}
+
+			{selectedProvider === "sambanova" && (
+				<SambaNova apiConfiguration={apiConfiguration} setApiConfigurationField={setApiConfigurationField} />
 			)}
 
 			{selectedProvider === "human-relay" && (
