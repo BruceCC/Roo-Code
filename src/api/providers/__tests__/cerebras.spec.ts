@@ -1,5 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from "vitest"
-
 // Mock i18n
 vi.mock("../../i18n", () => ({
 	t: vi.fn((key: string, params?: Record<string, any>) => {
@@ -58,7 +56,7 @@ describe("CerebrasHandler", () => {
 		it("should fallback to default model when apiModelId is not provided", () => {
 			const handlerWithoutModel = new CerebrasHandler({ cerebrasApiKey: "test" })
 			const { id } = handlerWithoutModel.getModel()
-			expect(id).toBe("qwen-3-235b-a22b-instruct-2507") // cerebrasDefaultModelId
+			expect(id).toBe("qwen-3-coder-480b") // cerebrasDefaultModelId (routed)
 		})
 	})
 

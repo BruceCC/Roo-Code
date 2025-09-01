@@ -4,12 +4,14 @@ import { CodeIndexOllamaEmbedder } from "./embedders/ollama"
 import { OpenAICompatibleEmbedder } from "./embedders/openai-compatible"
 import { GeminiEmbedder } from "./embedders/gemini"
 import { MistralEmbedder } from "./embedders/mistral"
+import { VercelAiGatewayEmbedder } from "./embedders/vercel-ai-gateway"
 import { EmbedderProvider, getDefaultModelId, getModelDimension } from "../../shared/embeddingModels"
 import { QdrantVectorStore } from "./vector-store/qdrant-client"
 import { codeParser, DirectoryScanner, FileWatcher } from "./processors"
 import { ICodeParser, IEmbedder, IFileWatcher, IVectorStore } from "./interfaces"
 import { CodeIndexConfigManager } from "./config-manager"
 import { CacheManager } from "./cache-manager"
+import { RooIgnoreController } from "../../core/ignore/RooIgnoreController"
 import { Ignore } from "ignore"
 import { t } from "../../i18n"
 import { TelemetryService } from "@roo-code/telemetry"
@@ -70,6 +72,11 @@ export class CodeIndexServiceFactory {
 				throw new Error(t("embeddings:serviceFactory.mistralConfigMissing"))
 			}
 			return new MistralEmbedder(config.mistralOptions.apiKey, config.modelId)
+		} else if (provider === "vercel-ai-gateway") {
+			if (!config.vercelAiGatewayOptions?.apiKey) {
+				throw new Error(t("embeddings:serviceFactory.vercelAiGatewayConfigMissing"))
+			}
+			return new VercelAiGatewayEmbedder(config.vercelAiGatewayOptions.apiKey, config.modelId)
 		}
 
 		throw new Error(
@@ -161,8 +168,17 @@ export class CodeIndexServiceFactory {
 		vectorStore: IVectorStore,
 		cacheManager: CacheManager,
 		ignoreInstance: Ignore,
+		rooIgnoreController?: RooIgnoreController,
 	): IFileWatcher {
-		return new FileWatcher(this.workspacePath, context, cacheManager, embedder, vectorStore, ignoreInstance)
+		return new FileWatcher(
+			this.workspacePath,
+			context,
+			cacheManager,
+			embedder,
+			vectorStore,
+			ignoreInstance,
+			rooIgnoreController,
+		)
 	}
 
 	/**
@@ -173,6 +189,7 @@ export class CodeIndexServiceFactory {
 		context: vscode.ExtensionContext,
 		cacheManager: CacheManager,
 		ignoreInstance: Ignore,
+		rooIgnoreController?: RooIgnoreController,
 	): {
 		embedder: IEmbedder
 		vectorStore: IVectorStore
@@ -188,7 +205,14 @@ export class CodeIndexServiceFactory {
 		const vectorStore = this.createVectorStore()
 		const parser = codeParser
 		const scanner = this.createDirectoryScanner(embedder, vectorStore, parser, ignoreInstance)
-		const fileWatcher = this.createFileWatcher(context, embedder, vectorStore, cacheManager, ignoreInstance)
+		const fileWatcher = this.createFileWatcher(
+			context,
+			embedder,
+			vectorStore,
+			cacheManager,
+			ignoreInstance,
+			rooIgnoreController,
+		)
 
 		return {
 			embedder,

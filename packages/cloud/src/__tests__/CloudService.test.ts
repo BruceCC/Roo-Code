@@ -1,14 +1,15 @@
 // npx vitest run src/__tests__/CloudService.test.ts
 
 import * as vscode from "vscode"
+
 import type { ClineMessage } from "@roo-code/types"
 
-import { CloudService } from "../CloudService"
-import { WebAuthService } from "../auth/WebAuthService"
-import { CloudSettingsService } from "../CloudSettingsService"
-import { ShareService, TaskNotFoundError } from "../ShareService"
-import { TelemetryClient } from "../TelemetryClient"
-import { TelemetryService } from "@roo-code/telemetry"
+import { TaskNotFoundError } from "../errors.js"
+import { CloudService } from "../CloudService.js"
+import { WebAuthService } from "../WebAuthService.js"
+import { CloudSettingsService } from "../CloudSettingsService.js"
+import { CloudShareService } from "../CloudShareService.js"
+import { CloudTelemetryClient as TelemetryClient } from "../TelemetryClient.js"
 
 vi.mock("vscode", () => ({
 	ExtensionContext: vi.fn(),
@@ -24,20 +25,20 @@ vi.mock("vscode", () => ({
 	},
 }))
 
-vi.mock("@roo-code/telemetry")
-
-vi.mock("../auth/WebAuthService")
+vi.mock("../WebAuthService")
 
 vi.mock("../CloudSettingsService")
 
-vi.mock("../ShareService")
+vi.mock("../CloudShareService")
 
 vi.mock("../TelemetryClient")
 
 describe("CloudService", () => {
 	let mockContext: vscode.ExtensionContext
+
 	let mockAuthService: {
 		initialize: ReturnType<typeof vi.fn>
+		broadcast: ReturnType<typeof vi.fn>
 		login: ReturnType<typeof vi.fn>
 		logout: ReturnType<typeof vi.fn>
 		isAuthenticated: ReturnType<typeof vi.fn>
@@ -53,6 +54,7 @@ describe("CloudService", () => {
 		once: ReturnType<typeof vi.fn>
 		emit: ReturnType<typeof vi.fn>
 	}
+
 	let mockSettingsService: {
 		initialize: ReturnType<typeof vi.fn>
 		getSettings: ReturnType<typeof vi.fn>
@@ -61,18 +63,14 @@ describe("CloudService", () => {
 		on: ReturnType<typeof vi.fn>
 		off: ReturnType<typeof vi.fn>
 	}
+
 	let mockShareService: {
 		shareTask: ReturnType<typeof vi.fn>
 		canShareTask: ReturnType<typeof vi.fn>
 	}
+
 	let mockTelemetryClient: {
 		backfillMessages: ReturnType<typeof vi.fn>
-	}
-	let mockTelemetryService: {
-		hasInstance: ReturnType<typeof vi.fn>
-		instance: {
-			register: ReturnType<typeof vi.fn>
-		}
 	}
 
 	beforeEach(() => {
@@ -111,6 +109,7 @@ describe("CloudService", () => {
 
 		mockAuthService = {
 			initialize: vi.fn().mockResolvedValue(undefined),
+			broadcast: vi.fn(),
 			login: vi.fn(),
 			logout: vi.fn(),
 			isAuthenticated: vi.fn().mockReturnValue(false),
@@ -145,23 +144,13 @@ describe("CloudService", () => {
 			backfillMessages: vi.fn().mockResolvedValue(undefined),
 		}
 
-		mockTelemetryService = {
-			hasInstance: vi.fn().mockReturnValue(true),
-			instance: {
-				register: vi.fn(),
-			},
-		}
-
 		vi.mocked(WebAuthService).mockImplementation(() => mockAuthService as unknown as WebAuthService)
-		vi.mocked(CloudSettingsService).mockImplementation(() => mockSettingsService as unknown as CloudSettingsService)
-		vi.mocked(ShareService).mockImplementation(() => mockShareService as unknown as ShareService)
-		vi.mocked(TelemetryClient).mockImplementation(() => mockTelemetryClient as unknown as TelemetryClient)
 
-		vi.mocked(TelemetryService.hasInstance).mockReturnValue(true)
-		Object.defineProperty(TelemetryService, "instance", {
-			get: () => mockTelemetryService.instance,
-			configurable: true,
-		})
+		vi.mocked(CloudSettingsService).mockImplementation(() => mockSettingsService as unknown as CloudSettingsService)
+
+		vi.mocked(CloudShareService).mockImplementation(() => mockShareService as unknown as CloudShareService)
+
+		vi.mocked(TelemetryClient).mockImplementation(() => mockTelemetryClient as unknown as TelemetryClient)
 	})
 
 	afterEach(() => {
@@ -461,7 +450,7 @@ describe("CloudService", () => {
 
 			// Get the settings listener that was registered with the settings service
 			const serviceSettingsListener = mockSettingsService.on.mock.calls.find(
-				(call) => call[0] === "settings-updated",
+				(call: string[]) => call[0] === "settings-updated",
 			)?.[1]
 
 			expect(serviceSettingsListener).toBeDefined()
@@ -513,7 +502,10 @@ describe("CloudService", () => {
 				},
 			]
 
-			const expectedResult = { success: true, shareUrl: "https://example.com/share/123" }
+			const expectedResult = {
+				success: true,
+				shareUrl: "https://example.com/share/123",
+			}
 			mockShareService.shareTask.mockResolvedValue(expectedResult)
 
 			const result = await cloudService.shareTask(taskId, visibility, clineMessages)
@@ -536,7 +528,10 @@ describe("CloudService", () => {
 				},
 			]
 
-			const expectedResult = { success: true, shareUrl: "https://example.com/share/123" }
+			const expectedResult = {
+				success: true,
+				shareUrl: "https://example.com/share/123",
+			}
 
 			// First call throws TaskNotFoundError, second call succeeds
 			mockShareService.shareTask
@@ -589,7 +584,10 @@ describe("CloudService", () => {
 
 		it("should work with default parameters", async () => {
 			const taskId = "test-task-id"
-			const expectedResult = { success: true, shareUrl: "https://example.com/share/123" }
+			const expectedResult = {
+				success: true,
+				shareUrl: "https://example.com/share/123",
+			}
 			mockShareService.shareTask.mockResolvedValue(expectedResult)
 
 			const result = await cloudService.shareTask(taskId)

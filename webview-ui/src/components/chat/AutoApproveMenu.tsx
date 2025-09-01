@@ -6,7 +6,6 @@ import { vscode } from "@src/utils/vscode"
 import { useExtensionState } from "@src/context/ExtensionStateContext"
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { AutoApproveToggle, AutoApproveSetting, autoApproveSettingsConfig } from "../settings/AutoApproveToggle"
-import { MaxLimitInputs } from "../settings/MaxLimitInputs"
 import { StandardTooltip } from "@src/components/ui"
 import { useAutoApprovalState } from "@src/hooks/useAutoApprovalState"
 import { useAutoApprovalToggles } from "@src/hooks/useAutoApprovalToggles"
@@ -22,8 +21,6 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 		autoApprovalEnabled,
 		setAutoApprovalEnabled,
 		alwaysApproveResubmit,
-		allowedMaxRequests,
-		allowedMaxCost,
 		setAlwaysAllowReadOnly,
 		setAlwaysAllowWrite,
 		setAlwaysAllowExecute,
@@ -34,8 +31,6 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 		setAlwaysApproveResubmit,
 		setAlwaysAllowFollowupQuestions,
 		setAlwaysAllowUpdateTodoList,
-		setAllowedMaxRequests,
-		setAllowedMaxCost,
 	} = useExtensionState()
 
 	const { t } = useAppTranslation()
@@ -162,12 +157,31 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 				overflowY: "auto",
 				...style,
 			}}>
+			{isExpanded && (
+				<div className="flex flex-col gap-2 py-4">
+					<div
+						style={{
+							color: "var(--vscode-descriptionForeground)",
+							fontSize: "12px",
+						}}>
+						<Trans
+							i18nKey="chat:autoApprove.description"
+							components={{
+								settingsLink: <VSCodeLink href="#" onClick={handleOpenSettings} />,
+							}}
+						/>
+					</div>
+
+					<AutoApproveToggle {...toggles} onToggle={onAutoApproveToggle} />
+				</div>
+			)}
+
 			<div
 				style={{
 					display: "flex",
 					alignItems: "center",
 					gap: "8px",
-					padding: isExpanded ? "8px 0" : "2px 0 0 0",
+					padding: "2px 0 0 0",
 					cursor: "pointer",
 				}}
 				onClick={toggleExpanded}>
@@ -220,40 +234,12 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 						{displayText}
 					</span>
 					<span
-						className={`codicon codicon-chevron-${isExpanded ? "down" : "right"}`}
-						style={{
-							flexShrink: 0,
-							marginLeft: isExpanded ? "2px" : "-2px",
-						}}
+						className={`codicon codicon-chevron-right flex-shrink-0 transition-transform duration-200 ease-in-out ${
+							isExpanded ? "-rotate-90 ml-[2px]" : "rotate-0 -ml-[2px]"
+						}`}
 					/>
 				</div>
 			</div>
-
-			{isExpanded && (
-				<div className="flex flex-col gap-2">
-					<div
-						style={{
-							color: "var(--vscode-descriptionForeground)",
-							fontSize: "12px",
-						}}>
-						<Trans
-							i18nKey="chat:autoApprove.description"
-							components={{
-								settingsLink: <VSCodeLink href="#" onClick={handleOpenSettings} />,
-							}}
-						/>
-					</div>
-
-					<AutoApproveToggle {...toggles} onToggle={onAutoApproveToggle} />
-
-					<MaxLimitInputs
-						allowedMaxRequests={allowedMaxRequests ?? undefined}
-						allowedMaxCost={allowedMaxCost ?? undefined}
-						onMaxRequestsChange={(value) => setAllowedMaxRequests(value)}
-						onMaxCostChange={(value) => setAllowedMaxCost(value)}
-					/>
-				</div>
-			)}
 		</div>
 	)
 }

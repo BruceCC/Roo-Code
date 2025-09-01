@@ -50,6 +50,9 @@
 		"mistralProvider": "Mistral",
 		"mistralApiKeyLabel": "API 키:",
 		"mistralApiKeyPlaceholder": "Mistral API 키를 입력하세요",
+		"vercelAiGatewayProvider": "Vercel AI Gateway",
+		"vercelAiGatewayApiKeyLabel": "API 키",
+		"vercelAiGatewayApiKeyPlaceholder": "Vercel AI Gateway API 키를 입력하세요",
 		"openaiCompatibleProvider": "OpenAI 호환",
 		"openAiKeyLabel": "OpenAI API 키",
 		"openAiKeyPlaceholder": "OpenAI API 키를 입력하세요",
@@ -113,6 +116,7 @@
 			"modelDimensionRequired": "모델 차원이 필요합니다",
 			"geminiApiKeyRequired": "Gemini API 키가 필요합니다",
 			"mistralApiKeyRequired": "Mistral API 키가 필요합니다",
+			"vercelAiGatewayApiKeyRequired": "Vercel AI Gateway API 키가 필요합니다",
 			"ollamaBaseUrlRequired": "Ollama 기본 URL이 필요합니다",
 			"baseUrlRequired": "기본 URL이 필요합니다",
 			"modelDimensionMinValue": "모델 차원은 0보다 커야 합니다"
@@ -127,6 +131,7 @@
 	},
 	"autoApprove": {
 		"description": "Roo가 승인 없이 자동으로 작업을 수행할 수 있도록 허용합니다. AI를 완전히 신뢰하고 관련 보안 위험을 이해하는 경우에만 이러한 설정을 활성화하세요.",
+		"enabled": "자동 승인 활성화됨",
 		"toggleAriaLabel": "자동 승인 전환",
 		"disabledAriaLabel": "자동 승인 비활성화됨 - 먼저 옵션을 선택하세요",
 		"readOnly": {
@@ -232,6 +237,8 @@
 		"awsCustomArnDesc": "ARN의 리전이 위에서 선택한 AWS 리전과 일치하는지 확인하세요.",
 		"openRouterApiKey": "OpenRouter API 키",
 		"getOpenRouterApiKey": "OpenRouter API 키 받기",
+		"vercelAiGatewayApiKey": "Vercel AI Gateway API 키",
+		"getVercelAiGatewayApiKey": "Vercel AI Gateway API 키 받기",
 		"apiKeyStorageNotice": "API 키는 VSCode의 보안 저장소에 안전하게 저장됩니다",
 		"glamaApiKey": "Glama API 키",
 		"getGlamaApiKey": "Glama API 키 받기",
@@ -252,14 +259,27 @@
 			"error": "모델 목록 새로고침에 실패했습니다. 다시 시도해 주세요."
 		},
 		"getRequestyApiKey": "Requesty API 키 받기",
+		"getRequestyBaseUrl": "기본 URL",
+		"requestyUseCustomBaseUrl": "사용자 정의 기본 URL 사용",
 		"openRouterTransformsText": "프롬프트와 메시지 체인을 컨텍스트 크기로 압축 (<a>OpenRouter Transforms</a>)",
 		"anthropicApiKey": "Anthropic API 키",
 		"getAnthropicApiKey": "Anthropic API 키 받기",
 		"anthropicUseAuthToken": "X-Api-Key 대신 Authorization 헤더로 Anthropic API 키 전달",
+		"anthropic1MContextBetaLabel": "1M 컨텍스트 창 활성화 (베타)",
+		"anthropic1MContextBetaDescription": "Claude Sonnet 4의 컨텍스트 창을 100만 토큰으로 확장",
+		"awsBedrock1MContextBetaLabel": "1M 컨텍스트 창 활성화 (베타)",
+		"awsBedrock1MContextBetaDescription": "Claude Sonnet 4의 컨텍스트 창을 100만 토큰으로 확장",
 		"cerebrasApiKey": "Cerebras API 키",
 		"getCerebrasApiKey": "Cerebras API 키 가져오기",
 		"chutesApiKey": "Chutes API 키",
 		"getChutesApiKey": "Chutes API 키 받기",
+		"fireworksApiKey": "Fireworks API 키",
+		"getFireworksApiKey": "Fireworks API 키 받기",
+		"featherlessApiKey": "Featherless API 키",
+		"getFeatherlessApiKey": "Featherless API 키 받기",
+		"ioIntelligenceApiKey": "IO Intelligence API 키",
+		"ioIntelligenceApiKeyPlaceholder": "IO Intelligence API 키를 입력하세요",
+		"getIoIntelligenceApiKey": "IO Intelligence API 키 받기",
 		"deepSeekApiKey": "DeepSeek API 키",
 		"getDeepSeekApiKey": "DeepSeek API 키 받기",
 		"doubaoApiKey": "Doubao API 키",
@@ -267,6 +287,10 @@
 		"moonshotApiKey": "Moonshot API 키",
 		"getMoonshotApiKey": "Moonshot API 키 받기",
 		"moonshotBaseUrl": "Moonshot 엔트리포인트",
+		"zaiApiKey": "Z AI API 키",
+		"getZaiApiKey": "Z AI API 키 받기",
+		"zaiEntrypoint": "Z AI 엔트리포인트",
+		"zaiEntrypointDescription": "위치에 따라 적절한 API 엔트리포인트를 선택하세요. 중국에 있다면 open.bigmodel.cn을 선택하세요. 그렇지 않으면 api.z.ai를 선택하세요.",
 		"geminiApiKey": "Gemini API 키",
 		"getGroqApiKey": "Groq API 키 받기",
 		"groqApiKey": "Groq API 키",
@@ -350,6 +374,8 @@
 		"ollama": {
 			"baseUrl": "기본 URL (선택사항)",
 			"modelId": "모델 ID",
+			"apiKey": "Ollama API 키",
+			"apiKeyHelp": "인증된 Ollama 인스턴스나 클라우드 서비스용 선택적 API 키. 로컬 설치의 경우 비워두세요.",
 			"description": "Ollama를 사용하면 컴퓨터에서 로컬로 모델을 실행할 수 있습니다. 시작하는 방법은 빠른 시작 가이드를 참조하세요.",
 			"warning": "참고: Roo Code는 복잡한 프롬프트를 사용하며 Claude 모델에서 가장 잘 작동합니다. 덜 강력한 모델은 예상대로 작동하지 않을 수 있습니다."
 		},
@@ -360,6 +386,10 @@
 		"humanRelay": {
 			"description": "API 키가 필요하지 않지만, 사용자가 웹 채팅 AI에 정보를 복사하여 붙여넣어야 합니다.",
 			"instructions": "사용 중에 대화 상자가 나타나고 현재 메시지가 자동으로 클립보드에 복사됩니다. 이를 웹 버전 AI(예: ChatGPT 또는 Claude)에 붙여넣은 다음, AI의 응답을 대화 상자에 복사하고 확인 버튼을 클릭해야 합니다."
+		},
+		"roo": {
+			"authenticatedMessage": "Roo Code Cloud 계정을 통해 안전하게 인증되었습니다.",
+			"connectButton": "Roo Code Cloud에 연결"
 		},
 		"openRouter": {
 			"providerRouting": {
@@ -422,9 +452,17 @@
 		},
 		"reasoningEffort": {
 			"label": "모델 추론 노력",
+			"minimal": "최소 (가장 빠름)",
 			"high": "높음",
 			"medium": "중간",
 			"low": "낮음"
+		},
+		"verbosity": {
+			"label": "출력 상세도",
+			"high": "높음",
+			"medium": "중간",
+			"low": "낮음",
+			"description": "모델 응답의 상세도를 제어합니다. 낮은 상세도는 간결한 답변을 생성하고, 높은 상세도는 상세한 설명을 제공합니다."
 		},
 		"setReasoningLevel": "추론 노력 활성화",
 		"claudeCode": {
@@ -686,6 +724,25 @@
 		"PREVENT_FOCUS_DISRUPTION": {
 			"name": "백그라운드 편집",
 			"description": "활성화하면 편집기 포커스 방해를 방지합니다. 파일 편집이 diff 뷰를 열거나 포커스를 빼앗지 않고 백그라운드에서 수행됩니다. Roo가 변경사항을 적용하는 동안 방해받지 않고 계속 작업할 수 있습니다. 파일은 진단을 캡처하기 위해 포커스 없이 열거나 완전히 닫힌 상태로 유지할 수 있습니다."
+		},
+		"ASSISTANT_MESSAGE_PARSER": {
+			"name": "새 메시지 파서 사용",
+			"description": "실험적 스트리밍 메시지 파서를 활성화합니다. 긴 응답을 더 효율적으로 처리해 지연을 줄입니다."
+		},
+		"NEW_TASK_REQUIRE_TODOS": {
+			"name": "새 작업에 'todos' 목록 필요",
+			"description": "활성화하면 new_task 도구에 todos 매개변수를 제공해야 합니다. 이렇게 하면 모든 새 작업이 명확한 목표 목록으로 시작됩니다. 비활성화하면(기본값) 이전 버전과의 호환성을 위해 todos 매개변수는 선택 사항으로 유지됩니다."
+		},
+		"IMAGE_GENERATION": {
+			"name": "AI 이미지 생성 활성화",
+			"description": "활성화하면 Roo는 OpenRouter의 이미지 생성 모델을 사용하여 텍스트 프롬프트에서 이미지를 생성할 수 있습니다. OpenRouter API 키 구성이 필요합니다.",
+			"openRouterApiKeyLabel": "OpenRouter API 키",
+			"openRouterApiKeyPlaceholder": "OpenRouter API 키를 입력하세요",
+			"getApiKeyText": "API 키를 받을 곳",
+			"modelSelectionLabel": "이미지 생성 모델",
+			"modelSelectionDescription": "이미지 생성에 사용할 모델을 선택하세요",
+			"warningMissingKey": "⚠️ 이미지 생성에는 OpenRouter API 키가 필요합니다. 위에서 설정해주세요.",
+			"successConfigured": "✓ 이미지 생성이 구성되었으며 사용할 준비가 되었습니다"
 		}
 	},
 	"promptCaching": {
@@ -704,6 +761,7 @@
 		"noComputerUse": "컴퓨터 사용 지원 안 함",
 		"supportsPromptCache": "프롬프트 캐시 지원",
 		"noPromptCache": "프롬프트 캐시 지원 안 함",
+		"contextWindow": "컨텍스트 창:",
 		"maxOutput": "최대 출력",
 		"inputPrice": "입력 가격",
 		"outputPrice": "출력 가격",
@@ -757,7 +815,8 @@
 		"modelAvailability": "제공한 모델 ID({{modelId}})를 사용할 수 없습니다. 다른 모델을 선택하세요.",
 		"providerNotAllowed": "제공자 '{{provider}}'는 조직에서 허용되지 않습니다",
 		"modelNotAllowed": "모델 '{{model}}'은 제공자 '{{provider}}'에 대해 조직에서 허용되지 않습니다",
-		"profileInvalid": "이 프로필에는 조직에서 허용되지 않는 제공자 또는 모델이 포함되어 있습니다"
+		"profileInvalid": "이 프로필에는 조직에서 허용되지 않는 제공자 또는 모델이 포함되어 있습니다",
+		"qwenCodeOauthPath": "유효한 OAuth 자격 증명 경로를 제공해야 합니다"
 	},
 	"placeholders": {
 		"apiKey": "API 키 입력...",
